@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Activity } from 'lucide-react';
+import { forgotPasswordApi } from '../api';
 import { Activity, Newspaper, ArrowLeft } from 'lucide-react';
 
 const ForgotPassword = () => {
@@ -15,11 +17,7 @@ const ForgotPassword = () => {
     setError('');
     
     try {
-      const res = await fetch('/api/auth/forgotpassword', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
+      const res = await forgotPasswordApi(email);
       const data = await res.json();
       
       if (res.ok) {

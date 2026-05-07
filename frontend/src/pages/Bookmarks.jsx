@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Bookmark as BookmarkIcon, LayoutGrid } from 'lucide-react';
+import { fetchStoriesApi } from '../api';
 import StoryCard from '../components/StoryCard';
 import { useAuth } from '../context/AuthContext';
 
@@ -18,7 +19,7 @@ const Bookmarks = () => {
       }
 
       try {
-        const res = await fetch('/api/stories');
+        const res = await fetchStoriesApi();
         const data = await res.json();
         
         if (Array.isArray(data)) {

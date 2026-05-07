@@ -1,5 +1,6 @@
 import { Bookmark, ExternalLink, TrendingUp, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { toggleBookmarkApi } from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const StoryCard = ({ story }) => {
@@ -21,12 +22,7 @@ const StoryCard = ({ story }) => {
     }
 
     try {
-      const res = await fetch(`/api/stories/${story._id}/bookmark`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-        },
-      });
+      const res = await toggleBookmarkApi(story._id, user.token);
       const data = await res.json();
       
       if (res.ok) {

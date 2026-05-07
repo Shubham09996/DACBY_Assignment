@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Activity, Newspaper } from 'lucide-react';
+import { resetPasswordApi } from '../api';
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -24,11 +25,7 @@ const ResetPassword = () => {
     setError('');
     
     try {
-      const res = await fetch(`/api/auth/resetpassword/${token}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
+      const res = await resetPasswordApi(token, password);
       const data = await res.json();
       
       if (res.ok) {

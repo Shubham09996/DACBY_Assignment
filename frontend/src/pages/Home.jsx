@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchStoriesApi } from '../api';
 import StoryCard from '../components/StoryCard';
 import { Activity, Search } from 'lucide-react';
 
@@ -10,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await fetch('/api/stories');
+        const res = await fetchStoriesApi();
         const data = await res.json();
         if (data && Array.isArray(data)) {
           setStories(data);
