@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
 import { forgotPasswordApi } from '../api';
 import { Activity, Newspaper, ArrowLeft } from 'lucide-react';
 
