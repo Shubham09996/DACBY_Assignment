@@ -83,7 +83,7 @@ const ResetPassword = () => {
           </div>
         </div>
 
-        <div className="text-xs text-slate-600 relative z-10 absolute bottom-12">
+        <div className="absolute bottom-12 left-16 text-xs text-slate-600 z-10">
           © 2026 HackerPulse. Crafted with care.
         </div>
       </div>
