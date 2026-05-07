@@ -1,7 +1,16 @@
-import { Link } from 'react-router-dom';
-import { Newspaper, Bookmark, Home, LogIn, UserPlus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Newspaper, Bookmark, Home, LogOut, User as UserIcon } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,19 +29,39 @@ const Navbar = () => {
               <Home className="w-4 h-4" />
               <span className="text-sm font-medium">Home</span>
             </Link>
-            <Link to="/bookmarks" className="flex items-center gap-2 px-4 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-              <Bookmark className="w-4 h-4" />
-              <span className="text-sm font-medium">Bookmarks</span>
-            </Link>
+            {user && (
+              <Link to="/bookmarks" className="flex items-center gap-2 px-4 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <Bookmark className="w-4 h-4" />
+                <span className="text-sm font-medium">Bookmarks</span>
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-              Login
-            </Link>
-            <Link to="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-lg shadow-blue-500/30">
-              Register
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-slate-300">
+                  <UserIcon className="w-4 h-4" />
+                  <span>{user.name}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-red-400 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                  Login
+                </Link>
+                <Link to="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-lg shadow-blue-500/30">
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
