@@ -22,10 +22,10 @@ const Bookmarks = () => {
         const data = await res.json();
         
         if (Array.isArray(data)) {
-          const filtered = data.filter(story => user.bookmarkedStories.some(s => s === story._id || s.hnId === story.hnId));
+          const filtered = data.filter(story => user.bookmarkedStories.includes(story._id));
           setBookmarkedStories(filtered);
         } else if (data && data.stories && Array.isArray(data.stories)) {
-          const filtered = data.stories.filter(story => user.bookmarkedStories.some(s => s === story._id || s.hnId === story.hnId));
+          const filtered = data.stories.filter(story => user.bookmarkedStories.includes(story._id));
           setBookmarkedStories(filtered);
         } else {
           setBookmarkedStories([]);

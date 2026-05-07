@@ -8,11 +8,13 @@ const StoryCard = ({ story }) => {
 
   // Check if story is bookmarked
   const isBookmarked = user?.bookmarkedStories?.some(
-    (s) => s.hnId === story.hnId || s._id === story._id || s === story._id
+    (s) => s === story._id || s._id === story._id
   );
 
   const handleBookmark = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     if (!user) {
       navigate('/login');
       return;
@@ -29,6 +31,8 @@ const StoryCard = ({ story }) => {
       
       if (res.ok) {
         updateUser({ ...user, bookmarkedStories: data.bookmarkedStories });
+      } else {
+        console.error('Failed to bookmark:', data.message);
       }
     } catch (error) {
       console.error('Error bookmarking:', error);
@@ -85,7 +89,8 @@ const StoryCard = ({ story }) => {
           </div>
           <button 
             onClick={handleBookmark}
-            className="text-slate-500 hover:text-white transition-colors"
+            type="button"
+            className={`transition-all duration-200 ${isBookmarked ? 'text-indigo-500 scale-110' : 'text-slate-500 hover:text-slate-300 hover:scale-110'}`}
           >
             <Bookmark className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} />
           </button>
