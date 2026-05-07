@@ -20,9 +20,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo - Left */}
           <div className="flex items-center w-1/3">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-indigo-400 to-purple-500 p-2 rounded-xl">
-                <Newspaper className="w-5 h-5 text-white" />
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 bg-indigo-500/10 rounded-xl flex items-center justify-center border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
+                <Newspaper className="w-4 h-4 text-indigo-400" />
               </div>
               <span className="font-bold text-xl text-white tracking-tight">
                 HackerPulse
