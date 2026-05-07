@@ -40,7 +40,7 @@ const Home = () => {
   });
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
       
       {/* Hero Section */}
       <div className="mb-12 max-w-3xl">
@@ -48,10 +48,10 @@ const Home = () => {
           <Activity className="w-3.5 h-3.5 text-indigo-400" />
           Real-time scraped from Hacker News
         </div>
-        <h1 className="text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
           Top Hacker News Stories
         </h1>
-        <p className="text-lg text-slate-400 font-normal leading-relaxed mb-12">
+        <p className="text-base md:text-lg text-slate-400 font-normal leading-relaxed mb-12">
           A beautifully designed, blazing-fast dashboard for what the tech world is talking about right now. Bookmark stories, search instantly, and never miss a beat.
         </p>
 

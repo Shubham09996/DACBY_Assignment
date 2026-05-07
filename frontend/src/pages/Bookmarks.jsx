@@ -42,16 +42,16 @@ const Bookmarks = () => {
 
   if (!user) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         <div className="max-w-3xl mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-400 mb-8">
             <BookmarkIcon className="w-3.5 h-3.5 text-indigo-400" />
             Saved Stories
           </div>
-          <h1 className="text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
             Sign in to view bookmarks
           </h1>
-          <p className="text-lg text-slate-400 font-normal leading-relaxed mb-12">
+          <p className="text-base md:text-lg text-slate-400 font-normal leading-relaxed mb-12">
             Create a free account to securely save Hacker News stories and access them anywhere, anytime. Never lose an important article again.
           </p>
           <div className="flex gap-4">
@@ -68,7 +68,7 @@ const Bookmarks = () => {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
       
       {/* Header Section */}
       <div className="mb-12 max-w-3xl">
@@ -76,10 +76,10 @@ const Bookmarks = () => {
           <BookmarkIcon className="w-3.5 h-3.5 text-indigo-400" />
           Saved Stories
         </div>
-        <h1 className="text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
           Your Bookmarks
         </h1>
-        <p className="text-lg text-slate-400 font-normal leading-relaxed mb-12">
+        <p className="text-base md:text-lg text-slate-400 font-normal leading-relaxed mb-12">
           Access your curated collection of the best tech news. Keep track of what matters to you.
         </p>
       </div>
