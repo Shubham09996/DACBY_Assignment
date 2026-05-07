@@ -1,4 +1,4 @@
-import { Bookmark, TrendingUp } from 'lucide-react';
+import { Bookmark, ExternalLink, TrendingUp, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,7 +6,10 @@ const StoryCard = ({ story }) => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const isBookmarked = user?.bookmarkedStories?.includes(story._id);
+  // Check if story is bookmarked
+  const isBookmarked = user?.bookmarkedStories?.some(
+    (s) => s.hnId === story.hnId || s._id === story._id || s === story._id
+  );
 
   const handleBookmark = async (e) => {
     e.preventDefault();
@@ -32,64 +35,88 @@ const StoryCard = ({ story }) => {
     }
   };
 
-  // Extract domain from URL
   const getDomain = (url) => {
-    if (!url) return 'news.ycombinator.com';
+    if (!url) return '';
     try {
       const { hostname } = new URL(url);
       return hostname.replace('www.', '');
     } catch (e) {
-      return 'news.ycombinator.com';
+      return '';
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Recently';
+    try {
+      // Handle scraped dates with concatenated timestamps "2026-05-06T16:18:29 1778084309"
+      const cleanDateString = dateString.split(' ')[0];
+      const date = new Date(cleanDateString);
+      
+      const now = new Date();
+      const diffInSeconds = Math.floor((now - date) / 1000);
+      
+      if (diffInSeconds < 60) return 'Just now';
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return `${diffInHours}h ago`;
+      const diffInDays = Math.floor(diffInHours / 24);
+      if (diffInDays < 30) return `${diffInDays}d ago`;
+      
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } catch (e) {
+      return 'Recently';
     }
   };
 
   return (
-    <a 
-      href={story.url || `https://news.ycombinator.com/item?id=${story.hnId}`}
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="block group bg-slate-800/40 hover:bg-slate-800/80 border border-slate-700 hover:border-slate-600 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-blue-900/20 hover:-translate-y-1 relative overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
-      <div className="relative z-10">
-        <div className="flex justify-between items-start gap-4 mb-4">
+    <div className="flex flex-col bg-[#111827] border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/10 hover:shadow-lg hover:shadow-black/20">
+      <div className="p-5 flex-1 flex flex-col">
+        {/* Top Row: Points & Domain */}
+        <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-semibold">
+            <div className="flex items-center gap-1.5 text-blue-500 text-xs font-semibold">
               <TrendingUp className="w-3.5 h-3.5" />
               {story.points}
-            </span>
-            <span className="text-sm text-slate-500 truncate max-w-[200px]">
+            </div>
+            <span className="text-slate-400 text-xs font-medium truncate max-w-[150px]">
               {getDomain(story.url)}
             </span>
           </div>
           <button 
             onClick={handleBookmark}
-            className={`p-2 rounded-full transition-colors ${
-              isBookmarked 
-                ? 'bg-blue-500/20 text-blue-400' 
-                : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-white'
-            }`}
+            className="text-slate-500 hover:text-white transition-colors"
           >
             <Bookmark className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} />
           </button>
         </div>
 
-        <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 leading-tight group-hover:text-blue-400 transition-colors">
+        {/* Title */}
+        <h3 className="text-lg font-bold text-white mb-6 leading-snug line-clamp-2 hover:text-blue-400 transition-colors cursor-pointer" onClick={() => window.open(story.url || `https://news.ycombinator.com/item?id=${story.hnId}`, '_blank')}>
           {story.title}
         </h3>
 
-        <div className="flex justify-between items-center text-sm text-slate-400 mt-auto pt-4 border-t border-slate-700/50">
+        {/* Author & Time */}
+        <div className="mt-auto flex justify-between items-center text-xs text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs text-white">
-              {story.author?.charAt(0).toUpperCase()}
-            </div>
-            <span>{story.author}</span>
+            <User className="w-3.5 h-3.5" />
+            <span className="font-medium">{story.author}</span>
           </div>
-          <span>{story.postedAt || 'Recently'}</span>
+          <span className="font-medium">{formatDate(story.postedAt)}</span>
         </div>
       </div>
-    </a>
+
+      {/* Read Article Button */}
+      <a 
+        href={story.url || `https://news.ycombinator.com/item?id=${story.hnId}`}
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 w-full py-3 border-t border-white/5 bg-white/[0.02] hover:bg-white/[0.04] text-xs font-semibold text-slate-300 transition-colors"
+      >
+        Read article
+        <ExternalLink className="w-3.5 h-3.5" />
+      </a>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark as BookmarkIcon } from 'lucide-react';
+import { Bookmark as BookmarkIcon, LayoutGrid } from 'lucide-react';
 import StoryCard from '../components/StoryCard';
 import { useAuth } from '../context/AuthContext';
 
@@ -18,13 +18,14 @@ const Bookmarks = () => {
       }
 
       try {
-        // Simple approach: fetch all stories and filter. 
-        // In a real app with many stories, we'd have a specific backend endpoint like GET /api/stories/bookmarked
         const res = await fetch('/api/stories');
         const data = await res.json();
         
         if (Array.isArray(data)) {
-          const filtered = data.filter(story => user.bookmarkedStories.includes(story._id));
+          const filtered = data.filter(story => user.bookmarkedStories.some(s => s === story._id || s.hnId === story.hnId));
+          setBookmarkedStories(filtered);
+        } else if (data && data.stories && Array.isArray(data.stories)) {
+          const filtered = data.stories.filter(story => user.bookmarkedStories.some(s => s === story._id || s.hnId === story.hnId));
           setBookmarkedStories(filtered);
         } else {
           setBookmarkedStories([]);
@@ -40,18 +41,23 @@ const Bookmarks = () => {
 
   if (!user) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-slate-800/50 rounded-2xl border border-slate-700 p-12 text-center max-w-2xl mx-auto mt-12">
-          <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <BookmarkIcon className="w-8 h-8 text-blue-400" />
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-3xl mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-400 mb-8">
+            <BookmarkIcon className="w-3.5 h-3.5 text-indigo-400" />
+            Saved Stories
           </div>
-          <h2 className="text-2xl font-bold text-white mb-4">Sign in to view bookmarks</h2>
-          <p className="text-slate-400 mb-8">Create a free account to bookmark stories and access them anywhere.</p>
-          <div className="flex justify-center gap-4">
-            <Link to="/login" className="px-6 py-2 rounded-full border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
+          <h1 className="text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
+            Sign in to view bookmarks
+          </h1>
+          <p className="text-lg text-slate-400 font-normal leading-relaxed mb-12">
+            Create a free account to securely save Hacker News stories and access them anywhere, anytime. Never lose an important article again.
+          </p>
+          <div className="flex gap-4">
+            <Link to="/login" className="px-6 py-3 rounded-xl border border-white/5 bg-[#111827] text-white hover:bg-white/5 transition-colors text-sm font-semibold">
               Login
             </Link>
-            <Link to="/register" className="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30 transition-colors">
+            <Link to="/register" className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20">
               Create account
             </Link>
           </div>
@@ -61,22 +67,44 @@ const Bookmarks = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-white mb-2">Your Bookmarks</h1>
-        <p className="text-slate-400">Manage your saved stories.</p>
-      </div>
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       
+      {/* Header Section */}
+      <div className="mb-12 max-w-3xl">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-400 mb-8">
+          <BookmarkIcon className="w-3.5 h-3.5 text-indigo-400" />
+          Saved Stories
+        </div>
+        <h1 className="text-5xl font-bold text-[#e2e8f0] tracking-tight mb-6">
+          Your Bookmarks
+        </h1>
+        <p className="text-lg text-slate-400 font-normal leading-relaxed mb-12">
+          Access your curated collection of the best tech news. Keep track of what matters to you.
+        </p>
+      </div>
+
+      {!loading && bookmarkedStories.length > 0 && (
+        <div className="mb-6 text-sm text-slate-400">
+          Showing <span className="font-semibold text-white">{bookmarkedStories.length}</span> saved stories
+        </div>
+      )}
+
+      {/* Feed Section */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="w-8 h-8 border-2 border-slate-700 border-t-indigo-500 rounded-full animate-spin"></div>
         </div>
       ) : bookmarkedStories.length === 0 ? (
-        <div className="bg-slate-800/50 rounded-2xl border border-slate-700 p-12 text-center">
-          <BookmarkIcon className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-white mb-2">No bookmarks yet</h3>
-          <p className="text-slate-400 mb-6">Stories you bookmark will appear here.</p>
-          <Link to="/" className="text-blue-400 hover:text-blue-300 transition-colors">
+        <div className="bg-[#111827] border border-white/5 rounded-2xl p-16 text-center max-w-2xl mx-auto mt-12">
+          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+            <BookmarkIcon className="w-8 h-8 text-slate-500" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">No bookmarks yet</h3>
+          <p className="text-slate-400 mb-8 text-sm max-w-sm mx-auto">
+            Stories you bookmark will appear here. Start exploring the front page to find interesting reads.
+          </p>
+          <Link to="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] text-white text-sm font-semibold transition-colors">
+            <LayoutGrid className="w-4 h-4" />
             Browse top stories
           </Link>
         </div>

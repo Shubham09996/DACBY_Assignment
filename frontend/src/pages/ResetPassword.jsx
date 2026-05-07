@@ -1,25 +1,46 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Activity, Newspaper } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
-const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const { register } = useAuth();
+const ResetPassword = () => {
+  const { token } = useParams();
   const navigate = useNavigate();
+  
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      return setError('Passwords do not match');
+    }
+    
+    setLoading(true);
+    setMessage('');
     setError('');
-    const result = await register(name, email, password);
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.message || 'Registration failed');
+    
+    try {
+      const res = await fetch(`/api/auth/resetpassword/${token}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        setMessage('Password updated successfully. Redirecting to login...');
+        setTimeout(() => navigate('/login'), 3000);
+      } else {
+        setError(data.message || 'Invalid or expired token');
+      }
+    } catch (err) {
+      setError('Server error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,41 +92,20 @@ const Register = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative">
         <div className="max-w-md w-full relative z-10">
           <div className="mb-10">
-            <h2 className="text-3xl font-bold text-white tracking-tight">Create your account</h2>
+            <h2 className="text-3xl font-bold text-white tracking-tight">Set new password</h2>
             <p className="mt-2 text-sm text-slate-400 font-normal">
-              Start tracking the best of Hacker News in seconds.
+              Your new password must be different from previously used passwords.
             </p>
           </div>
           
           <div className="bg-[#111827]/50 border border-white/5 rounded-3xl p-8">
             {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm p-4 rounded-xl mb-6 shadow-inner">{error}</div>}
+            {message && <div className="bg-green-500/10 border border-green-500/30 text-green-400 text-sm p-4 rounded-xl mb-6 shadow-inner">{message}</div>}
             
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-5">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3.5 bg-[#111827] border border-white/5 rounded-xl focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-600 transition-colors sm:text-sm outline-none"
-                    placeholder="Ada Lovelace"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3.5 bg-[#111827] border border-white/5 rounded-xl focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-600 transition-colors sm:text-sm outline-none"
-                    placeholder="you@company.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Password</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">New Password</label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
@@ -124,23 +124,31 @@ const Register = () => {
                     </button>
                   </div>
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Confirm Password</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3.5 bg-[#111827] border border-white/5 rounded-xl focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-600 transition-colors sm:text-sm outline-none"
+                    placeholder="Confirm new password"
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full flex justify-center py-3.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 focus:outline-none transition-all shadow-lg shadow-indigo-500/20 mt-8"
+                disabled={loading}
+                className="w-full flex justify-center py-3.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 focus:outline-none transition-all shadow-lg shadow-indigo-500/20 mt-6 disabled:opacity-50"
               >
-                Create account
+                {loading ? 'Resetting...' : 'Reset password'}
               </button>
-              
-              <p className="text-center text-[11px] text-slate-500 mt-4">
-                By signing up you agree to our <a href="#" className="text-white hover:underline font-medium">Terms</a> and <a href="#" className="text-white hover:underline font-medium">Privacy</a>.
-              </p>
             </form>
           </div>
           
           <p className="text-center text-sm text-slate-400 mt-8">
-            Already have an account? <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Sign in</Link>
+            <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Back to log in</Link>
           </p>
         </div>
       </div>
@@ -148,4 +156,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ResetPassword;

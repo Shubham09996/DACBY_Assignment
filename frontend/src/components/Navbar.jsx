@@ -12,43 +12,50 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 w-full bg-slate-950/80 backdrop-blur-md border-b border-white/5">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="bg-blue-600 p-2 rounded-lg">
+          {/* Logo - Left */}
+          <div className="flex items-center w-1/3">
+            <Link to="/" className="flex items-center gap-3">
+              <div className="bg-gradient-to-br from-indigo-400 to-purple-500 p-2 rounded-xl">
                 <Newspaper className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-white tracking-tight">HackerPulse</span>
+              <span className="font-bold text-xl text-white tracking-tight">
+                HackerPulse
+              </span>
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center space-x-1">
-            <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-              <Home className="w-4 h-4" />
-              <span className="text-sm font-medium">Home</span>
+          {/* Main Navigation - Center */}
+          <div className="hidden md:flex items-center justify-center w-1/3 gap-2">
+            <Link 
+              to="/" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-sm font-medium transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Home
             </Link>
-            {user && (
-              <Link to="/bookmarks" className="flex items-center gap-2 px-4 py-2 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                <Bookmark className="w-4 h-4" />
-                <span className="text-sm font-medium">Bookmarks</span>
-              </Link>
-            )}
+            <Link 
+              to="/bookmarks" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-slate-400 hover:text-slate-200 hover:bg-white/5 text-sm font-medium transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+              Bookmarks
+            </Link>
           </div>
 
-          <div className="flex items-center space-x-4">
+          {/* Auth - Right */}
+          <div className="flex items-center justify-end w-1/3 gap-6">
             {user ? (
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-sm text-slate-300">
-                  <UserIcon className="w-4 h-4" />
-                  <span>{user.name}</span>
-                </div>
+              <div className="flex items-center gap-6">
+                <span className="text-sm font-medium text-slate-300">
+                  {user.name}
+                </span>
                 <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-red-400 transition-colors"
+                  onClick={logout}
+                  className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
                 >
-                  <LogOut className="w-4 h-4" />
                   Logout
                 </button>
               </div>
@@ -57,7 +64,7 @@ const Navbar = () => {
                 <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                   Login
                 </Link>
-                <Link to="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-lg shadow-blue-500/30">
+                <Link to="/register" className="px-5 py-2 rounded-full bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
                   Register
                 </Link>
               </>
